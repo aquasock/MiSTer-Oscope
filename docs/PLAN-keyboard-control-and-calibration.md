@@ -247,5 +247,3 @@ M1 -> M2 -> M3. M4 is independent. M5 needs M4. M6 needs M5 and M3.
 - **Hysteresis coupling.** Upstream ties the trigger hysteresis to
   `stabilize_enable` (`scope_vga.v:219`), so toggling stabilization retunes the
   trigger threshold. Worth decoupling and reporting upstream.
-- **Blink-182 is copyrighted.** Worth noting only because the plan's example is
-  a commercial track; a generated tone exercising the same path avoids it.
