@@ -1,0 +1,45 @@
+# --------------------------------------------------------------------------
+# Core source list. The framework files come in via sys/sys.qip (sourced by
+# sys/sys.tcl); only mister_oscope's own sources belong here.
+# Cyclone V PLL: CLK_VIDEO must come from a PLL output (see  scope_core.sv).
+# Retuned from the author's other MiSTer core (same board and chip) to 50 MHz.
+set_global_assignment -name VERILOG_FILE rtl/pll.v
+set_global_assignment -name VERILOG_FILE rtl/pll/pll_0002.v
+
+# Ported from phase0noise/Occiliscope. VHDL top and capture engine.
+set_global_assignment -name VHDL_FILE rtl/oscilloscope.vhd
+set_global_assignment -name VHDL_FILE rtl/scope_capture.vhd
+
+# Portable Verilog blocks, unchanged from upstream apart from the MiSTer
+# video-interface additions to scope_vga.v (VGA_DE / VGA_CE).
+set_global_assignment -name VERILOG_FILE rtl/scope_vga.v
+set_global_assignment -name VERILOG_FILE rtl/scope_live.v
+set_global_assignment -name VERILOG_FILE rtl/scope_fft.v
+set_global_assignment -name VERILOG_FILE rtl/uart_tx.v
+set_global_assignment -name VERILOG_FILE rtl/uart_rx.v
+set_global_assignment -name VERILOG_FILE rtl/SEG7_LUT.v
+set_global_assignment -name VERILOG_FILE rtl/SEG7_LUT_6.v
+
+# WAV streaming from SD: the block reader, the RIFF walker, and the elastic
+# frame FIFO that serves the scope. data/scope_capture.vhd's control logic is
+# untouched -- the source module chooses between these and the triangle.
+set_global_assignment -name SYSTEMVERILOG_FILE rtl/media_file_reader.sv
+set_global_assignment -name SYSTEMVERILOG_FILE rtl/wav_decoder.sv
+set_global_assignment -name SYSTEMVERILOG_FILE rtl/wav_source.sv
+
+# Synthetic ADC stand-in. Same module name and ports as upstream's
+# rtl/slide_adc.v, which instantiated the MAX 10 modular-ADC IP; this build
+# has no analog input yet. Replaced wholesale once LTC2308 support lands.
+set_global_assignment -name SYSTEMVERILOG_FILE rtl/slide_adc.sv
+
+# QWERTY control: scancode decoder + protocol frame builder. The scope's
+# controls are a byte parser for the phone's UART protocol, so the keyboard
+# speaks that protocol rather than duplicating any control logic.
+set_global_assignment -name SYSTEMVERILOG_FILE rtl/oscope_keys.sv
+set_global_assignment -name SYSTEMVERILOG_FILE rtl/oscope_ctrl_frames.sv
+
+# MiSTer core shell (instantiates the VHDL scope; this is module "emu").
+set_global_assignment -name SYSTEMVERILOG_FILE rtl/oscope_core.sv
+
+# Project-specific timing constraints, applied after sys/sys_top.sdc.
+set_global_assignment -name SDC_FILE mister_oscope.sdc
